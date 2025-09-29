@@ -1,0 +1,218 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Школы - AI-Документооборот{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h2>Управление школами</h2>
+        <div class="page-actions">
+            <button class="btn btn-primary" onclick="createSchool()">
+                <i data-lucide="plus"></i>
+                Добавить школу
+            </button>
+        </div>
+    </div>
+
+    <div class="schools-grid">
+        {% for school in schools %}
+        <div class="school-card">
+            <div class="school-header">
+                <h3>{{ school.name }}</h3>
+                <!-- <div class="school-actions">
+                    <button class="btn-icon" title="Редактировать" onclick="editSchool({{ school.id }})">
+                        <i data-lucide="edit"></i>
+                    </button>
+                    <button class="btn-icon" title="Удалить" onclick="deleteSchool({{ school.id }})">
+                        <i data-lucide="trash-2"></i>
+                    </button>
+                </div> -->
+            </div>
+            <div class="school-content">
+                <div class="school-info">
+                    <div class="info-item">
+                        <i data-lucide="map-pin"></i>
+                        <span>{{ school.address|default:"Адрес не указан" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <i data-lucide="phone"></i>
+                        <span>{{ school.tel|default:"Телефон не указан" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <i data-lucide="mail"></i>
+                        <span>{{ school.email|default:"Email не указан" }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="school-footer">
+                <div class="school-stats">
+                    <div class="stat">
+                        <span class="stat-number">{{ school.user_count }}</span>
+                        <span class="stat-label">Пользователей</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">{{ school.documents_count|default:"0" }}</span>
+                        <span class="stat-label">Документов</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <i data-lucide="school"></i>
+            <h3>Школы не найдены</h3>
+            <p>Добавьте первую школу для начала работы</p>
+            <button class="btn btn-primary" onclick="createSchool()">Добавить школу</button>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.schools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.school-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    transition: box-shadow 0.2s;
+}
+
+.school-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.school-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.school-header h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    flex: 1;
+    margin-right: 1rem;
+}
+
+.school-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.school-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.info-item i {
+    width: 16px;
+    height: 16px;
+    color: var(--text-muted);
+}
+
+.school-footer {
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
+.school-stats {
+    display: flex;
+    justify-content: space-around;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function createSchool() {
+    const content = `
+        <form id="school-form">
+            <div class="form-group">
+                <label for="name">Название школы</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Адрес</label>
+                <input type="text" id="address" name="address">
+            </div>
+            <div class="form-group">
+                <label for="phone">Телефон</label>
+                <input type="tel" id="phone" name="phone">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email">
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Создать</button>
+                <button type="button" class="btn btn-outline" onclick="Modal.close(this.closest('.modal-overlay'))">Отмена</button>
+            </div>
+        </form>
+    `;
+    
+    const modal = Modal.show(content, 'Добавление школы');
+    
+    const form = modal.querySelector('#school-form');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (!Forms.validate(form)) return;
+        
+        try {
+            const data = Forms.serialize(form);
+            await API.post('/api/schools/', data);
+            Notifications.success('Школа успешно создана');
+            Modal.close(modal);
+            location.reload();
+        } catch (error) {
+            Notifications.error('Ошибка при создании школы');
+        }
+    });
+}
+
+function editSchool(id) {
+    Notifications.info('Функция редактирования в разработке');
+}
+
+function deleteSchool(id) {
+    if (confirm('Вы уверены, что хотите удалить эту школу?')) {
+        Notifications.info('Функция удаления в разработке');
+    }
+}
+</script>
+{% endblock %}

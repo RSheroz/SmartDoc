@@ -1,0 +1,109 @@
+{% extends 'main/base.html' %}
+
+{% block title %}<span data-i18n="statistics_page_title">Статистика - AI-Документооборот</span>{% endblock %}
+
+{% block content %}
+ <main class="main-content">
+        <div class="page-container">
+            <div class="page-header">
+                <h2 data-i18n="welcome_title">Добро пожаловать в AI-Документооборот</h2>
+                <p data-i18n="welcome_subtitle">Управляйте документами эффективно с помощью искусственного интеллекта</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i data-lucide="file-text"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{docs.count}}</h3>
+                        <p data-i18n="total_documents">Всего документов</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i data-lucide="clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{stat.pending}}</h3>
+                        <p data-i18n="pending_review">На проверке</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i data-lucide="check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{stat.signed}}</h3>
+                        <p data-i18n="signed">Подписано</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i data-lucide="layout-template"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{templates.count}}</h3>
+                        <p data-i18n="templates">Шаблонов</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 data-i18n="quick_actions">Быстрые действия</h3>
+                    <p data-i18n="frequently_used">Часто используемые функции</p>
+                </div>
+                <div class="card-content">
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" onclick="location.href='documents'">
+                            <i data-lucide="plus"></i>
+                            <span data-i18n="create_document">Создать документ</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="location.href='templates'">
+                            <i data-lucide="layout-template"></i>
+                            <span data-i18n="choose_template">Выбрать шаблон</span>
+                        </button>
+                        <!-- <button class="quick-action-btn" onclick="location.href='user_list'">
+                            <i data-lucide="user-plus"></i>
+                            <span data-i18n="add_user">Добавить пользователя</span>
+                        </button> -->
+                        <button class="quick-action-btn" onclick="location.href='documents'">
+                            <i data-lucide="search"></i>
+                            <span data-i18n="find_document">Найти документ</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Documents -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 data-i18n="recent_documents">Последние документы</h3>
+                    <p data-i18n="recently_created">Недавно созданные или измененные</p>
+                </div>
+                <div class="card-content">
+                    <div class="recent-documents">
+                        {% for doc in last_three_docs %}
+                        <a style="text-decoration: none;" class="recent-document" href="documents/#document-{{doc.id}}">
+                            <div class="document-icon">
+                                <i data-lucide="file-text"></i>
+                            </div>
+                            <div class="document-info">
+                                <h4>{{doc.title}}</h4>
+                                <p data-i18n="created">Создан {{doc.created_at}}</p>
+                            </div>
+                            <div class="badge badge-signed">{{doc.get_status_display}}</div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

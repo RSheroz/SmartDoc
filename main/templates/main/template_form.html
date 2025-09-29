@@ -1,0 +1,16 @@
+{% extends 'main/base.html' %}
+{%load static%}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+{% endblock %}
+{% block content %}
+<div class="content-area">
+<h2 data-i18n="create_edit_template">Создание / редактирование шаблона</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary" data-i18n="save">Сохранить</button>
+</form>
+<a href="{% url 'templates' %}" class="btn" data-i18n="back_to_list">Назад к списку</a>
+</div>
+{% endblock %}

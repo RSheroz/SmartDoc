@@ -1,0 +1,25 @@
+{% extends "main/base.html" %}
+{%load static%}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+{% endblock extra_css %}
+{% block title %}<span data-i18n="registration_page_title">Регистрация</span>{% endblock %}
+{% block content %}
+  <div class="content-area">
+    {% if request.resolver_match.url_name == 'register' %}
+     <h2 data-i18n="registration">Регистрация</h2>
+    {% else %}
+      <h2 data-i18n="edit_user">Редактирование пользователя</h2>
+    {% endif %}
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary" data-i18n="save">Сохранить</button>
+  </form>
+  {% if request.resolver_match.url_name == 'register' %}
+    <!-- <a href="{% url 'login' %}" data-i18n="already_have_account">Уже есть аккаунт? Войти</a> -->
+  {% else %}
+    <a href="{% url 'user_list' %}" data-i18n="cancel">Отмена</a>
+  {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'main/base.html' %}
+{% block content %}
+<h2 data-i18n="delete_template">Удалить шаблон</h2>
+<p data-i18n="delete_template_confirm">Вы уверены, что хотите удалить шаблон "{{ object.title }}"?</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit" data-i18n="yes_delete">Да, удалить</button>
+  <a href="{% url 'templates' %}" data-i18n="cancel">Отмена</a>
+</form>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'main/base.html' %}
+{%load static%}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+{% endblock extra_css %}
+
+{% block title %}<span data-i18n="templates_page_title">Шаблоны - AI-Документооборот</span>{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h2 data-i18n="document_templates">Шаблоны документов</h2>
+        <div class="page-actions">
+            <a class="btn btn-primary" href="{%url 'template_create'%}">
+                <i data-lucide="plus"></i>
+                <span data-i18n="create_template">Создать шаблон</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="documents-grid">
+        {% for template in templates %}
+        <div class="document-card">
+            <div class="template-header">
+                <h3>{{ template.title }}</h3>
+                <div class="template-actions">
+                    <a class="btn-icon" title="Редактировать" href="{% url 'edit_template' template.id %}" data-i18n-title="edit">
+                        <i data-lucide="edit"></i>
+                    </a>
+                    <a class="btn-icon" title="Удалить" href="{% url 'delete_template' template.id %}" data-i18n-title="delete">
+                        <i data-lucide="trash-2"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="template-content">
+                <p>{{ template.description|truncatewords:15 }}</p>
+            </div>
+            <div class="template-footer">
+                <div class="template-meta">
+                    <!-- <span data-i18n="usage_count">Использований: {{ template.usage_count|default:"0" }}</span> -->
+                    <span>{{ template.created_at|date:"d.m.Y" }}</span>
+                </div>
+                <a class="btn btn-info" href="{% url 'fill_template' template.id %}" data-i18n="use_template">
+                    Использовать
+                </a >
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <i data-lucide="file-text"></i>
+            <h3 data-i18n="no_templates_found">Шаблоны не найдены</h3>
+            <p data-i18n="create_first_template">Создайте первый шаблон для быстрого создания документов</p>
+            <a class="btn btn-primary" href="{% url 'template_create' %}" data-i18n="create_template">Создать шаблон</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

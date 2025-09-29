@@ -1,0 +1,201 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Профиль - AI-Документооборот{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h2>Мой профиль</h2>
+    </div>
+
+    <div class="profile-grid">
+        <!-- Личная информация -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Личная информация</h3>
+                <p>Основные данные профиля</p>
+            </div>
+            <div class="card-content">
+                <form id="profile-form">
+                    <div class="form-group avatar-group">
+                        <label for="avatar">Фото профиля</label>
+                        <div class="avatar-wrapper">
+                            <img id="avatar-preview" src="{{ user.avatar.url }}" class="avatar">
+                        </div>
+                        <button type="button" class="btn btn-secondary" id="change-avatar-btn">Изменить фото</button>
+                        <input type="file" id="avatar-input" name="avatar" accept="image/*" hidden>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="first_name">Имя</label>
+                        <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="last_name">Фамилия</label>
+                        <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" value="{{ user.email }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username">Логин</label>
+                        <input type="text" id="username" name="username" value="{{ user.username }}" readonly>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">💾 Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Смена пароля -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Смена пароля</h3>
+                <p>Обновление пароля для входа</p>
+            </div>
+            <div class="card-content">
+                <form id="password-form">
+                    <div class="form-group">
+                        <label for="current_password">Текущий пароль</label>
+                        <input type="password" id="current_password" name="current_password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="new_password">Новый пароль</label>
+                        <input type="password" id="new_password" name="new_password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm_password">Подтверждение пароля</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">🔑 Изменить пароль</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.page-header h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Карточки */
+.card {
+    background: var(--card-bg, #fff);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+.card-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+.card-header p {
+    color: var(--text-secondary, #777);
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+}
+
+/* Аватар */
+.avatar-group {
+    text-align: center;
+}
+.avatar-wrapper {
+    margin-top: 0.5rem;
+}
+.avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary, #4f46e5);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* Формы */
+.form-group {
+    margin-top: 1rem;
+}
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+}
+.form-group input {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border, #ddd);
+    border-radius: 0.6rem;
+    background: var(--input-bg, #fafafa);
+    transition: border 0.3s;
+}
+.form-group input:focus {
+    border-color: var(--primary, #4f46e5);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(79,70,229,0.2);
+}
+
+/* Кнопки */
+.btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.6rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: 0.3s;
+}
+.btn-primary {
+    background: var(--primary, #4f46e5);
+    color: #fff;
+}
+.btn-primary:hover {
+    background: var(--primary-hover, #4338ca);
+}
+
+/* Нижняя граница формы */
+.form-actions {
+    margin-top: 1.5rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--border, #ddd);
+}
+#change-avatar-btn {
+    margin-top: 0.8rem;
+    background: var(--secondary, #64748b);
+    color: #fff;
+    font-size: 0.9rem;
+}
+#change-avatar-btn:hover {
+    background: #475569;
+}
+
+</style>
+{% endblock %}

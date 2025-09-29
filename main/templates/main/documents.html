@@ -1,0 +1,110 @@
+{% extends 'main/base.html' %}
+
+{% block title %}<span data-i18n="documents_page_title">Документы - AI-Документооборот</span>{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h2 data-i18n="my_documents">Мои документы</h2>
+        <div class="badge" id="documents-count">{{ documents.count }} <span data-i18n="documents_count">документов</span></div>
+    </div>
+
+    <!-- Панель фильтров и поиска -->
+    <div class="card">
+        <div class="card-header">
+            <h3 data-i18n="filters_search">Фильтры и поиск</h3>
+            <p data-i18n="find_documents">Найдите нужные документы</p>
+        </div>
+        <div class="card-content">
+            <div class="filters-grid">
+                <div class="form-group">
+                    <label for="search-query" data-i18n="search_placeholder">Поиск по названию/содержанию</label>
+                    <div class="search-input">
+                        <input type="text" id="search-query" data-i18n-placeholder="search_input_placeholder" placeholder="Введите текст для поиска...">
+                        <i data-lucide="search"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="filter-status" data-i18n="status">Статус</label>
+                    <select id="filter-status">
+                        <option value="all" data-i18n="all_statuses">Все статусы</option>
+                        <option value="draft" data-i18n="draft">Черновик</option>
+                        <option value="pending" data-i18n="pending">На проверке</option>
+                        <option value="signed" data-i18n="signed">Подписан</option>
+                        <option value="rejected" data-i18n="rejected">Отклонен</option>
+                    </select>
+                </div>
+                                
+                <div class="form-group">
+                    <label for="filter-template" data-i18n="template">Шаблон</label>
+                    <select id="filter-template">
+                        <option value="all" data-i18n="all_templates">Все шаблоны</option>
+                        {% for template in templates %}
+                        <option value="{{ template.id }}">{{ template.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="filters-actions">
+                <button type="button" class="btn btn-outline" id="reset-filters" data-i18n="reset_filters">Сбросить фильтры</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Список документов -->
+         <table class="documents-table" id="documents-list">
+            <thead>
+                <tr>
+                    <th data-i18n="document">Документ</th>
+                    <th data-i18n="creation_date">Дата создания</th>
+                    <th data-i18n="status">Статус</th>
+                    <th data-i18n="actions">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for document in documents %}
+                <tr data-title="{{ document.title|lower }}" 
+                    data-content="{{ document.content|lower }}"
+                    data-status="{{ document.status }}"
+                    data-template="{{ document.template.id|default:'none' }}"
+                    data-id="{{document.id}}" id="document-{{ document.id }}">
+                    <td>
+                        <div class="document-title">{{ document.title }}</div>
+                    </td>
+                    <td class="document-date">{{ document.created_at|date:"d.m.Y" }}</td>
+                    <td><span class="badge-status badge-{{ document.status }}">{{ document.get_status_display }}</span></td>
+                    <td>
+                        <div class="document-actions">
+                            <a class="btn-icon" title="Просмотр" data-i18n-title="view">
+                                <i data-lucide="eye"></i>
+                            </a>
+                            <a class="btn-icon" href="{% url 'document_edit' document.id %}" title="Редактировать" data-i18n-title="edit">
+                                <i data-lucide="edit"></i>
+                            </a>
+                            <a class="btn-icon" href="{{ document.file.url }}" target="_blank" title="Скачать" data-i18n-title="download">
+                                <i data-lucide="download"></i>
+                            </a>
+                            <a class="btn-icon" href="{% url 'document_delete' document.id %}" data-i18n-title="delete">
+                                <i data-lucide="trash-2"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 60px 24px;">
+                        <div class="empty-state">
+                            <i data-lucide="search"></i>
+                            <h3 data-i18n="no_documents_filter">Документы не найдены</h3>
+                            <p data-i18n="change_search_filters">Попробуйте изменить параметры поиска или фильтры</p>
+                            <button class="btn btn-outline reset-btn" data-i18n="reset_filters">Сбросить фильтры</button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+</div>
+{% endblock %}

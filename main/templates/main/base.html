@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="site_title">{% block title %}AI-Документооборот{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <div class="logo">
+                    <img src="{% static 'image/logo.png' %}" alt="Logo" class="logo-image" height="40px">
+                    <div class="logo-text">
+                        <h1 data-i18n="logo_title">SmartDoc</h1>
+                        <p data-i18n="logo_subtitle">Система управления документами</p>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <span>{{ user.first_name }} {{ user.last_name }}</span>
+                    <span class="user-role"><span data-i18n="role">Роль</span>: {{ user.get_role_display }}: {{user.school}}</span>
+                </div>
+                <a href="{% url 'logout' %}" class="btn btn-outline" data-i18n="logout">Выйти</a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="navigation">
+        <div class="nav-container">
+            <div class="nav-tabs">
+                <a href="{% url 'index' %}" class="nav-tab {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                    <i data-lucide="bar-chart-3"></i>
+                    <span data-i18n="statistics">Статистика</span>
+                </a>
+                <a href="{% url 'documents' %}" class="nav-tab {% if request.resolver_match.url_name == 'documents' %}active{% endif %}">
+                    <i data-lucide="file-text"></i>
+                    <span data-i18n="documents">Документы</span>
+                </a>
+                <a href="{% url 'document_create' %}" class="nav-tab {% if request.resolver_match.url_name == 'document_create' %}active{% endif %}">
+                    <i data-lucide="plus"></i>
+                    <span data-i18n="create">Создать</span>
+                </a>
+                <a href="{% url 'ai' %}" class="nav-tab {% if request.resolver_match.url_name == 'ai' %}active{% endif %}">
+                    <i data-lucide="bot"></i>
+                    <span data-i18n="ai_generator">ИИ-Генератор</span>
+                </a>
+                <a href="{% url 'templates' %}" class="nav-tab {% if request.resolver_match.url_name == 'templates' %}active{% endif %}">
+                    <i data-lucide="users"></i>
+                    <span data-i18n="templates">Шаблоны</span>
+                </a>
+                {% if user.role == 'director' %}
+                <a href="{% url 'user_list' %}" class="nav-tab {% if request.resolver_match.url_name == 'user_list' %}active{% endif %}">
+                    <i data-lucide="user-cog"></i>
+                    <span data-i18n="users">Пользователи</span>
+                </a>
+                {% endif %}
+                {% if user.is_superuser %}
+                <a href="{% url 'schools' %}" class="nav-tab {% if request.resolver_match.url_name == 'schools' %}active{% endif %}">
+                    <i data-lucide="school"></i>
+                    <span data-i18n="schools">Школы</span>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main class="main-content">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i data-lucide="alert-circle"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="/static/js/js.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/translation.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

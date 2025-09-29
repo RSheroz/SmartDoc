@@ -1,0 +1,81 @@
+{% extends 'main/base.html' %}
+{%load static%}
+{% block extra_css %}
+<style>.language-switcher-login {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    background: white;
+}
+
+.language-switcher-login .lang-btn {
+    padding: 8px 16px;
+    background: #f8f9fa;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.language-switcher-login .lang-btn:hover {
+    background: #e9ecef;
+}
+
+.language-switcher-login .lang-btn.active {
+    background: #007bff;
+    color: white;
+}</style>
+{% endblock extra_css %}
+
+{% block title %}<span data-i18n="login_page_title">Вход в систему</span>{% endblock %}
+
+{% block content %}
+<div class="login-body">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div>
+                    <img src="{% static 'image/logo.png' %}" alt="Logo" class="logo-image" height="60px">
+                </div>
+                <h1 data-i18n="smartdoc">SmartDoc</h1>
+                <p data-i18n="system_description">Система управления документами для школ</p>
+            </div>
+            
+            <div class="login-content">
+                {% if messages %}
+                <div class="alert alert-error">
+                    <i data-lucide="alert-circle"></i>
+                    {% for message in messages %}{{ message }}{% endfor %}
+                </div>
+                {% endif %}
+                
+                <form method="post" class="login-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="username" data-i18n="username">Логин</label>
+                        <input type="text" id="username" name="username" data-i18n-placeholder="username_placeholder" placeholder="Введите логин" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" data-i18n="password">Пароль</label>
+                        <input type="password" id="password" name="password" data-i18n-placeholder="password_placeholder" placeholder="Введите пароль" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full" data-i18n="login_button">Войти в систему</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script>lucide.createIcons();</script>
+    
+    <!-- Добавляем переключатель языков на страницу входа -->
+    <div class="language-switcher-login">
+        <button class="lang-btn" data-lang="ru" onclick="changeLanguage('ru')">RU</button>
+        <button class="lang-btn" data-lang="en" onclick="changeLanguage('en')">EN</button>
+    </div>
+</div> 
+{% endblock %}

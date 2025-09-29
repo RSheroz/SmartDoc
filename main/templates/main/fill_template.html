@@ -1,0 +1,38 @@
+{% extends "main/base.html" %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+{% endblock extra_css %}
+{% block title %}<span data-i18n="fill_document_title">Fill document {{data.id}}</span>{% endblock title %}
+{% block content %}
+
+<div class="content-area">
+    <div class="content-header">
+        <h2 class="content-title" data-i18n="document_name">Имя документа</h2>
+    </div>
+    <hr style="border:0; height:2px; background-color:#8eb5cf;"><br>
+    {% if form_errors %}
+        {{form_errors|safe}}
+    {% elif res %}
+    <form action="{% url 'save_docx' %}" method="post">
+        {% csrf_token %}
+            <input type="hidden" name="title" value="{{title}}">
+            {{form.type}}
+            <input type="hidden" name="text" value="{{res}}">
+            {{res|safe}}
+            <input type="hidden" name="status" value="waiting">
+            <button type="submit" class="btn btn-primary" data-i18n="save_to_database">Сохранить в базе</button>
+        </form>
+    {% else %}
+        <form method="post">
+            {% csrf_token %}
+            {{data|safe}}
+            <button type="submit" class="btn btn-primary" data-i18n="save">save</button>
+        </form>
+    {% endif %}
+    <!-- Надо чтобы ты использовал для полей ввода данный этот класс:
+        class="form-control"
+    -->
+
+</div>
+{% endblock content %}

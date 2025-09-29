@@ -1,0 +1,146 @@
+{% extends "main/base.html" %}
+{%load static%}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <style>
+  .accordion {
+    background-color: #f1f1f1;
+    color: #444;
+    cursor: pointer;
+    padding: 12px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.3s;
+    font-size: 16px;
+    border-radius: 6px;
+  }
+
+  .accordion.active, .accordion:hover {
+    background-color: #ddd;
+  }
+
+  .panel {
+    padding: 0 12px;
+    display: none;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+
+  .panel button {
+    margin: 4px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    background: #4CAF50;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .panel button:hover {
+    background: #45a049;
+  }
+
+  textarea {
+    width: 100%;
+    height: 60px;
+    margin-bottom: 8px;
+  }
+  #ans {
+    height: 300px;
+  }
+</style>
+{% endblock extra_css %}
+{% block title %}<span data-i18n="documents">Documents</span>{% endblock %}
+{% block content %}
+    <div class="content-area">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <textarea name="query" id="query" class="form-control" data-i18n-placeholder="query_placeholder" placeholder="запрос...">{{ q }}</textarea>
+            <br>
+            <input type="file" name="files" class="form-control" multiple data-i18n-placeholder="file_placeholder" placeholder="файл..." accept="*/*">
+            <br>
+            <button type="submit" class="btn btn-primary" data-i18n="send">send</button>
+        </form>
+        {% if ans %}
+        <form action="{% url 'save_docx' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="title" value="{{ q }}">
+            <textarea name="text" id="ans">{{ ans|safe }}</textarea>
+            <button data-i18n="save_to_db">сохранить в базе</button>
+          </form>
+            <!-- <button id="download-btn" data-i18n="download_docx">скачать docx</button> -->
+        {% else %}
+         <button class="accordion" data-i18n="quick_queries">📂 Быстрые запросы</button>
+            <div class="panel">
+                <button onclick="setQuery('Ҳисоботи 3 моҳа аз руи додаҳо')" data-i18n="3_months">3-моҳа</button>
+                <button onclick="setQuery('Ҳисоботи 6 моҳа аз руи додаҳо')" data-i18n="6_months">6-моҳа</button>
+                <button onclick="setQuery('Ҳисоботи 9 моҳа аз руи додаҳо')" data-i18n="9_months">9-моҳа</button>
+                <button onclick="setQuery('Ҳисоботи солона аз руи додаҳо')" data-i18n="annual">Солона</button>
+                <button onclick="setQuery('Ахборотҳо')" data-i18n="information">Ахборотҳо</button>
+            </div>
+        {% endif %}
+    </div>
+<script type="module">
+
+const { Document, Packer, Paragraph, TextRun } = docx;
+
+document.getElementById("download-btn").addEventListener("click", async () => {
+    const text = document.getElementById("ans").value.trim();
+    if (!text) {
+        alert("Введите текст для создания документа!");
+        return;
+    }
+
+    const lines = text.split("\n").filter(line => line.trim() !== "");
+    
+    const paragraphs = lines.map((line, index) => {
+        if (index === 0) {
+            // Первая строка — заголовок
+            return new Paragraph({
+                children: [
+                    new TextRun({
+                        text: line,
+                        bold: true,
+                        color: "1F4E79",
+                        size: 36
+                    })
+                ]
+            });
+        } else {
+            // Остальные строки — обычный текст
+            return new Paragraph(line);
+        }
+    });
+
+    const doc = new Document({
+        sections: [{
+            properties: {},
+            children: paragraphs
+        }]
+    });
+
+    const blob = await Packer.toBlob(doc);
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "document.docx";
+    link.click();
+    URL.revokeObjectURL(link.href);
+});
+</script>
+<script>
+  // Функция для вставки текста в поле
+  function setQuery(text) {
+    document.getElementById("query").value = text;
+  }
+
+  // Логика гармошки
+  document.querySelector(".accordion").addEventListener("click", function() {
+    this.classList.toggle("active");
+    let panel = this.nextElementSibling;
+    panel.style.display = panel.style.display === "block" ? "none" : "block";
+  });
+</script>
+{% endblock %}

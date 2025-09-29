@@ -1,0 +1,26 @@
+{% extends "main/base.html" %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+
+<div class="content-area">
+    <div class="content-header">
+        <h1 class="content-title" data-i18n="create_document">Создать документ</h1>
+    </div>    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-elements">{{form.title}}</div>
+        <div class="form-elements">{{form.content}}</div>
+        <div class="form-elements">{{form.category}}</div> 
+        <div class="form-elements">{{form.status}}</div> 
+        <div class="form-elements">{{form.file}}</div>
+        {% if document.file.name %} 
+            <p data-i18n="current_file">Текущий файл: <a href="{{ document.file.url }}">{{ document.file.name }}</a></p>
+        {% endif %}
+        <button type="submit" class="btn btn-primary" data-i18n="save">сохранить</button>
+    </form>
+</div>
+{% endblock %}

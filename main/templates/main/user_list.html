@@ -1,0 +1,204 @@
+{% extends 'main/base.html' %}
+
+{% block title %}<span data-i18n="users_page_title">Пользователи - AI-Документооборот</span>{% endblock %}
+
+{% block extra_css %}
+<style>
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+.table th {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.user-name {
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.user-username {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.table-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.empty-cell {
+    text-align: center;
+    padding: 2rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h2 data-i18n="user_management">Управление пользователями</h2>
+        <div class="page-actions">
+            <a class="btn btn-primary" href="{%url 'register'%}">
+                <i data-lucide="user-plus"></i>
+                <span data-i18n="add_user">Добавить пользователя</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-content">
+            <div class="users-table">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th data-i18n="user">Пользователь</th>
+                            <th data-i18n="email">Email</th>
+                            <th data-i18n="role">Роль</th>
+                            <th data-i18n="status">Статус</th>
+                            <th data-i18n="actions">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">{{ user.first_name.0 }}{{ user.last_name.0 }}</div>
+                                    <div>
+                                        <div class="user-name">{{ user.first_name }} {{ user.last_name }}</div>
+                                        <div class="user-username">@{{ user.username }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                <div class="badge" style="color: var(--primary);">{{ user.get_role_display|default:"Пользователь" }}</div>
+                            </td>
+                            <td>
+                                <div class="badge badge-{% if user.is_active %}approved{% else %}rejected{% endif %}">
+                                    {% if user.is_active %}<span data-i18n="active">Активен</span>{% else %}<span data-i18n="inactive">Неактивен</span>{% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-actions">
+                                    <a class="btn-icon" title="Редактировать" href="{% url 'user_edit' user.id %}" data-i18n-title="edit">
+                                        <i data-lucide="edit"></i>
+                                    </a>
+                                    <!-- <button class="btn-icon" title="{% if user.is_active %}Деактивировать{% else %}Активировать{% endif %}" 
+                                            onclick="toggleUser({{ user.id }}, {{ user.is_active|yesno:'false,true' }})" data-i18n-title="{% if user.is_active %}deactivate{% else %}activate{% endif %}">
+                                        <i data-lucide="{% if user.is_active %}user-x{% else %}user-check{% endif %}"></i>
+                                    </button> -->
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="empty-cell">
+                                <div class="empty-state">
+                                    <i data-lucide="users"></i>
+                                    <p data-i18n="no_users_found">Пользователи не найдены</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function createUser() {
+    const content = `
+        <form id="user-form">
+            <div class="form-group">
+                <label for="first_name">Имя</label>
+                <input type="text" id="first_name" name="first_name" required>
+            </div>
+            <div class="form-group">
+                <label for="last_name">Фамилия</label>
+                <input type="text" id="last_name" name="last_name" required>
+            </div>
+            <div class="form-group">
+                <label for="username">Логин</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Создать</button>
+                <button type="button" class="btn btn-outline" onclick="Modal.close(this.closest('.modal-overlay'))">Отмена</button>
+            </div>
+        </form>
+    `;
+    
+    const modal = Modal.show(content, 'Добавление пользователя');
+    
+    const form = modal.querySelector('#user-form');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (!Forms.validate(form)) return;
+        
+        try {
+            const data = Forms.serialize(form);
+            await API.post('/api/users/', data);
+            Notifications.success('Пользователь успешно создан');
+            Modal.close(modal);
+            location.reload();
+        } catch (error) {
+            Notifications.error('Ошибка при создании пользователя');
+        }
+    });
+}
+
+function editUser(id) {
+    Notifications.info('Функция редактирования в разработке');
+}
+
+function toggleUser(id, activate) {
+    const action = activate ? 'активировать' : 'деактивировать';
+    if (confirm(`Вы уверены, что хотите ${action} этого пользователя:?`)) {
+        Notifications.info('Функция изменения статуса в разработке');
+    }
+}
+</script>
+{% endblock %}
