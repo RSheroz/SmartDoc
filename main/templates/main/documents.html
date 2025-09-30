@@ -96,10 +96,10 @@
                 <tr>
                     <td colspan="4" style="text-align: center; padding: 60px 24px;">
                         <div class="empty-state">
-                            <i data-lucide="search"></i>
-                            <h3 data-i18n="no_documents_filter">Документы не найдены</h3>
-                            <p data-i18n="change_search_filters">Попробуйте изменить параметры поиска или фильтры</p>
-                            <button class="btn btn-outline reset-btn" data-i18n="reset_filters">Сбросить фильтры</button>
+                            <i data-lucide="file-text"></i>
+                            <h3 data-i18n="no_documents_found">Документы не найдены</h3>
+                            <p data-i18n="create_first_document">Создайте первый документ или измените фильтры поиска</p>
+                            <a href="{% url 'document_create' %}" class="btn btn-primary" data-i18n="create_document">Создать документ</a>
                         </div>
                     </td>
                 </tr>
@@ -107,4 +107,8 @@
             </tbody>
         </table>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/documents.js"></script>
 {% endblock %}

@@ -53,7 +53,7 @@
                 </a>
                 <a href="{% url 'templates' %}" class="nav-tab {% if request.resolver_match.url_name == 'templates' %}active{% endif %}">
                     <i data-lucide="users"></i>
-                    <span data-i18n="templates">Шаблоны</span>
+                    <span data-i18n="head_templates">Шаблоны</span>
                 </a>
                 {% if user.role == 'director' %}
                 <a href="{% url 'user_list' %}" class="nav-tab {% if request.resolver_match.url_name == 'user_list' %}active{% endif %}">

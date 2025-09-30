@@ -1,3 +1,4 @@
+
 // Функциональность страницы документов
 document.addEventListener("DOMContentLoaded", () => {
   // ===== Получаем элементы из DOM =====
@@ -5,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const statusFilter = document.getElementById("filter-status")
   const templateFilter = document.getElementById("filter-template")
   const resetButton = document.getElementById("reset-filters")
-  const documentsContainer = document.getElementById("documents-list")
+  const documentsContainer = document.getElementById("documents-list") // сама таблица
   const tbody = documentsContainer.querySelector("tbody")
 
   // ===== API =====
@@ -106,10 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const statusValue = statusFilter.value
     const templateValue = templateFilter.value
 
-    // Находим все строки с документами (исключая empty state)
     const rows = tbody.querySelectorAll("tr[data-id]")
-    const emptyRow = tbody.querySelector("tr:not([data-id])") // строка с empty state
-    
     let visibleCount = 0
 
     rows.forEach((row) => {
@@ -118,17 +116,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const title = (row.dataset.title || "").toLowerCase()
       const content = (row.dataset.content || "").toLowerCase()
 
-      // Поиск по тексту
       if (searchQuery && !title.includes(searchQuery) && !content.includes(searchQuery)) {
         isVisible = false
       }
 
-      // Фильтр по статусу
       if (statusValue !== "all" && row.dataset.status !== statusValue) {
         isVisible = false
       }
 
-      // Фильтр по шаблону
       if (templateValue !== "all" && row.dataset.template !== templateValue) {
         isVisible = false
       }
@@ -136,17 +131,9 @@ document.addEventListener("DOMContentLoaded", () => {
       row.style.display = isVisible ? "" : "none"
       if (isVisible) visibleCount++
     })
-
-    // Показываем/скрываем empty state
-    if (emptyRow) {
-      emptyRow.style.display = visibleCount === 0 ? "" : "none"
-    } else if (visibleCount === 0) {
-      showEmptyState(true)
-    } else {
-      showEmptyState(false)
-    }
+    if (visibleCount === 0) {showEmptyState(true)}
+    else{showEmptyState(false)}
   }
-
   // ===== Сброс фильтров =====
   function resetFilters() {
     searchInput.value = ""
@@ -154,49 +141,26 @@ document.addEventListener("DOMContentLoaded", () => {
     templateFilter.value = "all"
     filterDocuments()
   }
-
-  // ===== Empty state =====
-  function showEmptyState(show) {
+ function showEmptyState(show) {
     let emptyState = documentsContainer.querySelector(".empty-state")
-    const emptyRow = tbody.querySelector("tr:not([data-id])")
 
-    if (show) {
-      // Скрываем все обычные строки
-      const rows = tbody.querySelectorAll("tr[data-id]")
-      rows.forEach(row => row.style.display = "none")
-      
-      // Показываем empty state строку
-      if (emptyRow) {
-        emptyRow.style.display = ""
-      } else {
-        // Создаем empty state если его нет
-        const newEmptyRow = document.createElement("tr")
-        newEmptyRow.innerHTML = `
-          <td colspan="4" style="text-align: center; padding: 60px 24px;">
-            <div class="empty-state">
-              <i data-lucide="search"></i>
-              <h3>Документы не найдены</h3>
-              <p>Попробуйте изменить параметры поиска или фильтры</p>
-              <button class="btn btn-outline reset-btn">Сбросить фильтры</button>
-            </div>
-          </td>
-        `
-        tbody.appendChild(newEmptyRow)
-        
-        const resetBtn = newEmptyRow.querySelector(".reset-btn")
-        resetBtn.addEventListener("click", resetFilters)
-        if (typeof lucide !== "undefined") {
-          lucide.createIcons()
-        }
+    if (show && !emptyState) {
+      emptyState = document.createElement("div")
+      emptyState.className = "empty-state"
+      emptyState.innerHTML = `
+                <i data-lucide="search"></i>
+                <h3>Документы не найдены</h3>
+                <p>Попробуйте изменить параметры поиска или фильтры</p>
+                <button class="btn btn-outline reset-btn">Сбросить фильтры</button>
+            `
+      documentsContainer.appendChild(emptyState)
+      const resetBtn = emptyState.querySelector(".reset-btn")
+      resetBtn.addEventListener("click", resetFilters)
+      if (typeof lucide !== "undefined") {
+        lucide.createIcons()
       }
-    } else {
-      // Скрываем empty state
-      if (emptyRow) {
-        emptyRow.style.display = "none"
-      }
-      if (emptyState) {
-        emptyState.remove()
-      }
+    } else if (!show && emptyState) {
+      emptyState.remove()
     }
   }
 
@@ -210,15 +174,12 @@ document.addEventListener("DOMContentLoaded", () => {
   tbody.addEventListener("click", async (e) => {
     const button = e.target.closest(".btn-icon")
     if (!button) return
-    
     const row = button.closest("tr[data-id]")
     if (!row) return
-    
     const documentId = row.dataset.id
-    const icon = button.querySelector('i')
-    const action = icon ? icon.getAttribute('data-lucide') : ''
+    const action = button.title.toLowerCase()
 
-    if (action === "eye") {
+    if (action === "просмотр") {
       try {
         const document = await API.get(`/api/documents/${documentId}/`)
         const content = `
@@ -243,3 +204,4 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== Запуск при загрузке =====
   filterDocuments()
 })
+

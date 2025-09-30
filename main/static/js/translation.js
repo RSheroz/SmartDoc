@@ -8,7 +8,7 @@ const translations = {
     "documents": "Документы",
     "create": "Создать",
     "ai_generator": "ИИ-Генератор",
-    "templates": "Шаблоны",
+    "head_templates": "Шаблоны",
     "users": "Пользователи",
     "schools": "Школы",
     "profile": "Профиль",
@@ -126,7 +126,7 @@ const translations = {
     "documents": "Documents",
     "create": "Create",
     "ai_generator": "AI Generator",
-    "templates": "Templates",
+    "head_templates": "Templates",
     "users": "Users",
     "schools": "Schools",
     "profile": "Profile",
@@ -236,7 +236,6 @@ const translations = {
     "change_search_filters": "Try changing search parameters or filters"
   }
 };
-
 function changeLanguage(lang) {
   // Обновляем язык html элемента
   document.documentElement.lang = lang;
