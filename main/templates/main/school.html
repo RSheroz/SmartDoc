@@ -1,0 +1,204 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}<span data-i18n="school_page_title">Школа - AI-Документооборот</span>{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h2 data-i18n="school_info">Информация о школе</h2>
+        <div class="page-actions">
+            {% if user.role == 'director' %}
+            <a href="{% url 'school'  %}" class="btn btn-primary" data-i18n="edit_school">
+                <i data-lucide="edit"></i>
+                Редактировать
+            </a>
+            {% endif %}
+        </div>
+    </div>  
+    <!-- Основная информация о школе -->
+    <div class="card">
+        <div class="card-header">
+            <h3 data-i18n="basic_info">Основная информация</h3>
+        </div>
+        <div class="card-content">
+            <div class="school-info-grid">
+                <div class="info-item">
+                    <label data-i18n="school_name">Название школы:</label>
+                    <span class="info-value">{{ user.school.name }}</span>
+                </div>
+                <div class="info-item">
+                    <label data-i18n="school_address">Адрес:</label>
+                    <span class="info-value">{{ user.school.address|default:"Не указан" }}</span>
+                </div>
+                <div class="info-item">
+                    <label data-i18n="school_director">Директор:</label>
+                    <span class="info-value">{{ user.school.director_name|default:"Не указан" }}</span>
+                </div>
+                <div class="info-item">
+                    <label data-i18n="school_phone">Телефон:</label>
+                    <span class="info-value">{{ user.school.tel|default:"Не указан" }}</span>
+                </div>
+                <div class="info-item">
+                    <label data-i18n="school_email">Email:</label>
+                    <span class="info-value">{{ user.school.email|default:"Не указан" }}</span>
+                </div>
+                <div class="info-item">
+                    <label data-i18n="school_website">Веб-сайт:</label>
+                    <span class="info-value">
+                        {% if user.school.website %}
+                            <a href="{{ user.school.website }}" target="_blank">{{ user.school.website }}</a>
+                        {% else %}
+                            Не указан
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Статистика школы -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i data-lucide="users"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ users_count }}</h3>
+                <p data-i18n="total_users">Всего пользователей</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i data-lucide="file-text"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ documents_count }}</h3>
+                <p data-i18n="total_documents">Всего документов</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i data-lucide="check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ signed_documents_count }}</h3>
+                <p data-i18n="signed_documents">Подписанных документов</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i data-lucide="layout-template"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ templates_count }}</h3>
+                <p data-i18n="templates">Шаблонов</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Пользователи школы -->
+    <div class="card">
+        <div class="card-header">
+            <h3 data-i18n="school_users">Пользователи школы</h3>
+            <p data-i18n="users_list">Список всех пользователей вашей школы</p>
+        </div>
+        <div class="card-content">
+            <div class="users-table">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th data-i18n="user">Пользователь</th>
+                            <th data-i18n="role">Роль</th>
+                            <th data-i18n="email">Email</th>
+                            <th data-i18n="status">Статус</th>
+                            <th data-i18n="last_login">Последний вход</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for school_user in users %}
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">
+                                        {{ school_user.first_name.0 }}{{ school_user.last_name.0 }}
+                                    </div>
+                                    <div>
+                                        <div class="user-name">{{ school_user.first_name }} {{ school_user.last_name }}</div>
+                                        <div class="user-username">@{{ school_user.username }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="badge badge-role">{{ school_user.get_role_display }}</div>
+                            </td>
+                            <td>{{ school_user.email|default:"—" }}</td>
+                            <td>
+                                <div class="badge badge-{% if school_user.is_active %}approved{% else %}rejected{% endif %}">
+                                    {% if school_user.is_active %}
+                                        <span data-i18n="active">Активен</span>
+                                    {% else %}
+                                        <span data-i18n="inactive">Неактивен</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                {% if school_user.last_login %}
+                                    {{ school_user.last_login|date:"d.m.Y H:i" }}
+                                {% else %}
+                                    <span data-i18n="never_logged_in">Никогда</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="empty-cell">
+                                <div class="empty-state">
+                                    <i data-lucide="users"></i>
+                                    <p data-i18n="no_users">Пользователи не найдены</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Недавние документы школы -->
+    <div class="card">
+        <div class="card-header">
+            <h3 data-i18n="recent_documents">Последние документы</h3>
+            <p data-i18n="recent_activity">Недавняя активность в школе</p>
+        </div>
+        <div class="card-content">
+            <div class="recent-documents">
+                {% for doc in documents|slice:":3" %}
+                <div class="recent-document">
+                    <div class="document-icon">
+                        <i data-lucide="file-text"></i>
+                    </div>
+                    <div class="document-info">
+                        <h4>{{ doc.title }}</h4>
+                        <p>
+                            <span data-i18n="created_by">Создан</span>: {{ doc.created_by.first_name }} {{ doc.created_by.last_name }} • 
+                            {{ doc.created_at|date:"d.m.Y H:i" }}
+                        </p>
+                    </div>
+                    <div class="badge badge-{{ doc.status }}">{{ doc.get_status_display }}</div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <i data-lucide="file-text"></i>
+                    <p data-i18n="no_recent_documents">Нет recent документов</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

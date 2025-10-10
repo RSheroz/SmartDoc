@@ -1,0 +1,65 @@
+{% extends 'smartadmin/base_admin.html' %}
+{% block content %}
+<h3>Аналитика SmartDoc</h3>
+
+<div class="row mt-4">
+  <div class="col-md-3">
+    <div class="card p-3 shadow-sm text-center">
+      <h6>Всего школ</h6>
+      <p class="fs-4">{{ schools_count }}</p>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3 shadow-sm text-center">
+      <h6>Одобренные школы</h6>
+      <p class="fs-4 text-success">{{ approved_schools }}</p>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3 shadow-sm text-center">
+      <h6>Пользователи</h6>
+      <p class="fs-4">{{ users_count }}</p>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3 shadow-sm text-center">
+      <h6>Документы</h6>
+      <p class="fs-4">{{ documents_count }}</p>
+    </div>
+  </div>
+</div>
+
+<hr class="my-4">
+
+<h5>Активность школ</h5>
+<table class="table table-hover mt-3 align-middle">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Школа</th>
+      <th>Документов</th>
+      <th>Пользователей</th>
+      <th>Статус</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for s in school_stats %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ s.name }}</td>
+      <td>{{ s.doc_count }}</td>
+      <td>{{ s.user_count }}</td>
+      <td>
+        {% if s.approved %}
+          <span class="badge bg-success">Активна</span>
+        {% else %}
+          <span class="badge bg-secondary">На рассмотрении</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" class="text-center">Нет данных</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

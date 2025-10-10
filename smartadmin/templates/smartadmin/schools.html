@@ -1,0 +1,59 @@
+{% extends 'smartadmin/base_admin.html' %}
+{% block content %}
+<h3>Список школ</h3>
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} mt-2">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+<table class="table table-striped mt-3 align-middle">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Название</th>
+      <th>Email</th>
+      <th>Телефон</th>
+      <th>Шапка</th>
+      <th>Статус</th>
+      <th>Действия</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for s in schools %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ s.name }}</td>
+      <td>{{ s.email }}</td>
+      <td>{{ s.tel }}</td>
+      <td>
+        {% if s.headletter %}
+          <a href="{{ s.headletter.url }}" class="btn btn-sm btn-outline-primary" target="_blank">Открыть</a>
+        {% else %}
+          <span class="text-muted">Нет файла</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if s.approved %}
+          <span class="badge bg-success">Одобрена</span>
+        {% else %}
+          <span class="badge bg-secondary">На рассмотрении</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if not s.approved %}
+          <a href="{% url 'approve_school' s.id %}" class="btn btn-sm btn-success">Одобрить</a>
+        {% else %}
+          <a href="{% url 'reject_school' s.id %}" class="btn btn-sm btn-warning">Отклонить</a>
+        {% endif %}
+        <a href="{% url 'delete_school' s.id %}" class="btn btn-sm btn-danger"
+           onclick="return confirm('Удалить школу {{ s.name }}?');">Удалить</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="7" class="text-center">Нет зарегистрированных школ</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

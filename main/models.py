@@ -6,6 +6,8 @@ class School(models.Model):
     address = models.TextField(blank=True)
     email = models.EmailField(blank=True)
     tel=models.CharField(max_length=20, blank=True)
+    headletter=models.FileField(upload_to='headletters/', null=True, blank=True)
+    approved=models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
@@ -21,6 +23,15 @@ class User(AbstractUser):
     avatar=models.ImageField(upload_to='avatars/' ,default='avatars/default.png')
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     school = models.ForeignKey(School, on_delete=models.CASCADE, null=True, blank=True)
+    
+    def is_director(self):
+        return self.role == 'director'
+
+    def is_secretary(self):
+        return self.role == 'secretary'
+
+    def is_teacher(self):
+        return self.role == 'teacher'
 
     def __str__(self):
         return f"{self.username} ({self.get_role_display()})"
@@ -64,5 +75,12 @@ class Document(models.Model):
     file=models.FileField(upload_to='documents/')
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.title
+
+class ExportBook(models.Model):
+    title=models.CharField(max_length=255)
+    datetime=models.DateTimeField(auto_now_add=True)
+    school=models.ForeignKey(School,on_delete=models.CASCADE)
     def __str__(self):
         return self.title

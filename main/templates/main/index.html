@@ -89,7 +89,7 @@
                 </div>
                 <div class="card-content">
                     <div class="recent-documents">
-                        {% for doc in last_three_docs %}
+                        {% for doc in docs|slice:":3" %}
                         <a style="text-decoration: none;" class="recent-document" href="documents/#document-{{doc.id}}">
                             <div class="document-icon">
                                 <i data-lucide="file-text"></i>

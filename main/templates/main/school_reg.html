@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="site_title">{% block title %}AI-Документооборот{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+  
+    <main class="main-content">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i data-lucide="alert-circle"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+  <div class="register-page">
+  <div class="form-container">
+    <h2 class="text-center mb-4">Регистрация школы</h2>
+
+    <form method="post" enctype="multipart/form-data" class="register-form">
+      {% csrf_token %}
+      <div class="form-grid">
+        
+        <!-- Карточка школы -->
+        <div class="card">
+          <div class="card-header"><h4>Данные школы</h4></div>
+          <div class="card-body">
+            <div class="form-group">
+              {{ form.school_name.label_tag }}
+              {{ form.school_name }}
+              {% if form.school_name.errors %}
+                <div class="error-text">{{ form.school_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              {{ form.address.label_tag }}
+              {{ form.address }}
+              {% if form.address.errors %}
+                <div class="error-text">{{ form.address.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              {{ form.email.label_tag }}
+              {{ form.email }}
+              {% if form.email.errors %}
+                <div class="error-text">{{ form.email.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              {{ form.tel.label_tag }}
+              {{ form.tel }}
+              {% if form.tel.errors %}
+                <div class="error-text">{{ form.tel.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              {{ form.headletter.label_tag }}
+              {{ form.headletter }}
+              {% if form.headletter.errors %}
+                <div class="error-text">{{ form.headletter.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Карточка директора -->
+        <div class="card">
+          <div class="card-header"><h4>Директор школы</h4></div>
+          <div class="card-body">
+            <div class="form-group">
+              {{ form.username.label_tag }}
+              {{ form.username }}
+              {% if form.username.errors %}
+                <div class="error-text">{{ form.username.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              {{ form.first_name.label_tag }}
+              {{ form.first_name }}
+              {% if form.first_name.errors %}
+                <div class="error-text">{{ form.first_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              {{ form.last_name.label_tag }}
+              {{ form.last_name }}
+              {% if form.last_name.errors %}
+                <div class="error-text">{{ form.last_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              {{ form.password.label_tag }}
+              {{ form.password }}
+              {% if form.password.errors %}
+                <div class="error-text">{{ form.password.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group mt-4 text-center">
+              <button type="submit" class="btn btn-primary w-100">Отправить заявку</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</div>
+</main>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/translation.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+
+<style>
+  .register-page {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background: url("{% static 'images/bg-school.jpg' %}") center/cover no-repeat;
+    min-height: 100vh;
+    padding-top: 40px;
+  }
+  .form-container {
+    width: 80%;
+    max-width: 1100px;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+  .card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+  .card-header {
+    background: #f4f6f9;
+    border-bottom: 1px solid #ddd;
+    padding: 15px 20px;
+  }
+  .card-body {
+    padding: 20px;
+  }
+  .form-group {
+    margin-bottom: 15px;
+  }
+  .form-control {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+  .btn-primary {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    transition: 0.3s;
+  }
+  .btn-primary:hover {
+    background: #2563eb;
+  }
+  .error-text {
+    color: #d9534f;
+    font-size: 13px;
+    margin-top: 5px;
+  }
+</style>

@@ -5,13 +5,14 @@ from .views import *
 urlpatterns = [
     path('', index, name='index'),  # Главная страница после входа
     path('add_user/', add_user, name='register'),
-    path('login/', auth_views.LoginView.as_view(template_name='main/login.html'), name='login'),
+    path('login/', login_view,name='login'), #auth_views.LoginView.as_view(template_name='main/login.html'), name='login'),
     path('logout/', logout, name='logout'),
     path('user_list/', user_list, name='user_list'),
     path('user_edit/<int:pk>/', UserUpdateView.as_view(), name='user_edit'),
     path('user_delete/<int:pk>/', UserDeleteView.as_view(), name='user_delete'),
     path('profile/', profile, name='profile'),
-    path('schools/', schools, name='schools'),
+    path('school/', school, name='school'),
+    path('school_reg/', school_reg, name='school_reg'),
     path('ai',ai,name='ai'),
     path('templates/',templates, name='templates'),
     path('template_create/',template_create, name='template_create'),

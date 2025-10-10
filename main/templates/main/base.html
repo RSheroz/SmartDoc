@@ -61,12 +61,10 @@
                     <span data-i18n="users">Пользователи</span>
                 </a>
                 {% endif %}
-                {% if user.is_superuser %}
-                <a href="{% url 'schools' %}" class="nav-tab {% if request.resolver_match.url_name == 'schools' %}active{% endif %}">
+                <a href="{% url 'school' %}" class="nav-tab {% if request.resolver_match.url_name == 'school' %}active{% endif %}">
                     <i data-lucide="school"></i>
-                    <span data-i18n="schools">Школы</span>
+                    <span data-i18n="schools">Школа</span>
                 </a>
-                {% endif %}
             </div>
         </div>
     </nav>
@@ -86,8 +84,7 @@
 
         {% block content %}{% endblock %}
     </main>
-
-    <script src="/static/js/js.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="/static/js/main.js"></script>
     <script src="/static/js/translation.js"></script>
     {% block extra_js %}{% endblock %}

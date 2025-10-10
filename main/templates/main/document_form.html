@@ -20,6 +20,7 @@
         {% if document.file.name %} 
             <p data-i18n="current_file">Текущий файл: <a href="{{ document.file.url }}">{{ document.file.name }}</a></p>
         {% endif %}
+        <input type="checkbox" name="leadletter" id="leadletter"> Добавить бланк в начало документа
         <button type="submit" class="btn btn-primary" data-i18n="save">сохранить</button>
     </form>
 </div>
