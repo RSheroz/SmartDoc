@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
+from datetime import date
 class School(models.Model):
     name = models.CharField(max_length=255)
     address = models.TextField(blank=True)
@@ -39,6 +39,7 @@ class User(AbstractUser):
 class Category(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
+    file=models.FileField(null=True,blank=True,upload_to="categories/")
     school = models.ForeignKey(School, on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -54,7 +55,7 @@ class Template(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.title
+        return f'{self.title} -- {self.school.name}'
 
 class Document(models.Model):
     STATUS_CHOICES = (
@@ -80,7 +81,24 @@ class Document(models.Model):
 
 class ExportBook(models.Model):
     title=models.CharField(max_length=255)
-    datetime=models.DateTimeField(auto_now_add=True)
+    number=models.PositiveIntegerField()
     school=models.ForeignKey(School,on_delete=models.CASCADE)
+    created_at=models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['school', 'number']
+
+    def save(self, *args, **kwargs):
+        # если запись новая
+        if not self.id:
+            current_year = date.today().year
+            # выбираем последнюю запись текущего года по этой школе
+            last_entry = ExportBook.objects.filter(
+                school=self.school,
+                created_at__year=current_year
+            ).order_by('-number').first()
+            self.number = (last_entry.number + 1) if last_entry else 1
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return self.title
+        return f"{self.number:02d}. {self.title} ({self.created_at})"

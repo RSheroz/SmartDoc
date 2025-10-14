@@ -1,0 +1,40 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div style="text-align: center; color: var(--surface);"><span>Экспортная книга школы {{ user.school.name }}</span> <button class="btn btn-primary" id="plus">+</button></div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>№</th>
+      <th>Описание</th>
+      <th>Дата</th>
+      <th>Действия</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for log in ebook %}
+      <tr>
+        <td>{{ log.number|add:"0"|slice:"-2:" }}</td>
+        <td>{{ log.title }}</td>
+        <td>{{ log.created_at }}</td>
+        <td><i id="" data-lucide="edit"></i></td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="3">Нет записей</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+<script>
+  document.getElementById('plus').onclick=function(){
+    const content=""+
+      '<form method="post" action="{% url "export_book" %}">{% csrf_token %}'+
+      '<div class="mb-3">'+
+      '<label for="title" class="form-label">Описание</label>'+
+      '<input type="text" class="form-control" id="title" name="title" required>'+
+      '</div>'+
+      '<button type="submit" class="btn btn-primary">Создать запись</button>'+
+      '</form>';
+    Modal.show(content,'Создать запись');
+  }
+</script>
+{% endblock %}

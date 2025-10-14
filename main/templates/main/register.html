@@ -1,86 +1,26 @@
-{% extends 'main/base.html' %}
-{% load static %}
-
-{% block title %}Редактирование профиля{% endblock %}
-
+{% extends "main/base.html" %}
+{%load static%}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+{% endblock extra_css %}
+{% block title %}<span data-i18n="registration_page_title">Регистрация</span>{% endblock %}
 {% block content %}
-<div class="container py-4">
-  <div class="card shadow-lg border-0 rounded-4">
-    <div class="card-header bg-primary text-white">
-      <h4 class="mb-0">Редактирование пользователя</h4>
-    </div>
-    <div class="card-body p-4">
-
-      <form method="POST" enctype="multipart/form-data" class="row g-3">
-        {% csrf_token %}
-
-        <!-- Показываем уведомления -->
-        {% if messages %}
-          {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-          {% endfor %}
-        {% endif %}
-
-        <!-- Имя пользователя -->
-        <div class="col-md-6">
-          <label for="id_username" class="form-label">Имя пользователя</label>
-          {{ form.username }}
-        </div>
-
-        <!-- Email -->
-        <div class="col-md-6">
-          <label for="id_email" class="form-label">Email</label>
-          {{ form.email }}
-        </div>
-
-        <!-- ФИО -->
-        <div class="col-md-6">
-          <label for="id_full_name" class="form-label">ФИО</label>
-          {{ form.full_name }}
-        </div>
-
-        <!-- Телефон -->
-        <div class="col-md-6">
-          <label for="id_phone" class="form-label">Телефон</label>
-          {{ form.phone }}
-        </div>
-
-        <!-- Только для супер-админа -->
-        {% if request.user.is_superuser %}
-        <div class="col-md-6">
-          <label for="id_school" class="form-label">Школа</label>
-          {{ form.school }}
-        </div>
-        <div class="col-md-6">
-          <label for="id_role" class="form-label">Роль</label>
-          {{ form.role }}
-        </div>
-        {% endif %}
-
-        <!-- Только для директора -->
-        {% if request.user.role == "director" and not request.user.is_superuser %}
-        <div class="col-md-6">
-          <label for="id_role" class="form-label">Роль</label>
-          {{ form.role }}
-        </div>
-        {% endif %}
-
-        <!-- Фото профиля -->
-        <div class="col-md-6">
-          <label for="id_photo" class="form-label">Фото профиля</label><br>
-          {{ form.photo }}
-          {% if form.instance.photo %}
-          <img src="{{ form.instance.photo.url }}" alt="Фото" class="mt-2 rounded shadow-sm" width="120">
-          {% endif %}
-        </div>
-
-        <!-- Кнопки -->
-        <div class="col-12 d-flex justify-content-between mt-4">
-          <a href="{% url 'user_list' %}" class="btn btn-secondary px-4">Назад</a>
-          <button type="submit" class="btn btn-primary px-4">Сохранить</button>
-        </div>
-      </form>
-    </div>
+  <div class="content-area">
+    {% if request.resolver_match.url_name == 'register' %}
+     <h2 data-i18n="registration">Регистрация</h2>
+    {% else %}
+      <h2 data-i18n="edit_user">Редактирование пользователя</h2>
+    {% endif %}
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="hidden" name="next" value="{{ request.META.HTTP_REFERER }}">
+    <button type="submit" class="btn btn-primary" data-i18n="save">Сохранить</button>
+  </form>
+  {% if request.resolver_match.url_name == 'register' %}
+    <!-- <a href="{% url 'login' %}" data-i18n="already_have_account">Уже есть аккаунт? Войти</a> -->
+  {% else %}
+    <a href="{{request.META.HTTP_REFERER}}" data-i18n="cancel">Отмена</a>
+  {% endif %}
   </div>
-</div>
 {% endblock %}

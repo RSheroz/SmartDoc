@@ -42,12 +42,13 @@
         {% endif %}
       </td>
       <td>
+        <a href="{% url 'smartadmin:edit_school' s.id %}" class="btn btn-sm btn-primary">Редактировать</a>
         {% if not s.approved %}
-          <a href="{% url 'approve_school' s.id %}" class="btn btn-sm btn-success">Одобрить</a>
+          <a href="{% url 'smartadmin:approve_school' s.id %}" class="btn btn-sm btn-success">Одобрить</a>
         {% else %}
-          <a href="{% url 'reject_school' s.id %}" class="btn btn-sm btn-warning">Отклонить</a>
+          <a href="{% url 'smartadmin:reject_school' s.id %}" class="btn btn-sm btn-warning">Отклонить</a>
         {% endif %}
-        <a href="{% url 'delete_school' s.id %}" class="btn btn-sm btn-danger"
+        <a href="{% url 'smartadmin:delete_school' s.id %}" class="btn btn-sm btn-danger"
            onclick="return confirm('Удалить школу {{ s.name }}?');">Удалить</a>
       </td>
     </tr>

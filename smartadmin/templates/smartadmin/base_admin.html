@@ -10,12 +10,12 @@
 <body>
 <nav class="navbar navbar-dark bg-dark navbar-expand-lg">
   <div class="container-fluid">
-    <a class="navbar-brand" href="{% url 'dashboard' %}">SmartAdmin</a>
+    <a class="navbar-brand" href="{% url 'smartadmin:dashboard' %}">SmartAdmin</a>
     <div>
-      <a href="{% url 'schools' %}" class="btn btn-outline-light btn-sm">Школы</a>
-      <a href="{% url 'users' %}" class="btn btn-outline-light btn-sm">Пользователи</a>
-      <a href="{% url 'documents' %}" class="btn btn-outline-light btn-sm">Документы</a>
-      <a href="{% url 'analytics' %}" class="btn btn-outline-light btn-sm">Аналитика</a>
+      <a href="{% url 'smartadmin:schools' %}" class="btn btn-outline-light btn-sm">Школы</a>
+      <a href="{% url 'smartadmin:users' %}" class="btn btn-outline-light btn-sm">Пользователи</a>
+      <a href="{% url 'smartadmin:documents' %}" class="btn btn-outline-light btn-sm">Документы</a>
+      <a href="{% url 'smartadmin:analytics' %}" class="btn btn-outline-light btn-sm">Аналитика</a>
       <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">Выйти</a>
     </div>
   </div>

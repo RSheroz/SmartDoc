@@ -34,26 +34,25 @@ def login_view(request):
 
             # Перенаправление по ролям
             if user.is_superuser:
-                return redirect('dashboard')
+                return redirect('smartadmin:dashboard')
             elif user.role == 'director':
                 return redirect('index')
         else:
             messages.error(request, "Неверный логин или пароль.")
     return render(request, 'main/login.html')
     
-
 class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserUpdateForm
     template_name = 'main/register.html'
     success_url = reverse_lazy('user_list')
+    
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
         user = self.request.user
         # Только супер-админ и директор могут менять роль
         if not (user.is_superuser or user.role == 'director'):
             form.fields.pop('role', None)
-            form.fields.pop('school', None)
         return form
 
     def get_object(self, queryset=None):
@@ -88,43 +87,74 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
         else:
             return qs.filter(pk=user.pk)
 
+    # ✅ Вот сюда добавляем redirect to back
+    def get_success_url(self):
+        # 1️⃣ сначала пробуем параметр next из URL
+        next_url = self.request.GET.get('next') or self.request.POST.get('next')
+        if next_url:
+            return next_url
 
+        # 2️⃣ затем пробуем Referer
+        referer = self.request.META.get('HTTP_REFERER')
+        if referer:
+            return referer
+
+        # 3️⃣ если ничего нет — возвращаем в список пользователей
+        return reverse_lazy('user_list')
+    
 class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = User
     template_name = 'main/user_confirm_delete.html'
     success_url = reverse_lazy('user_list')
     def get_queryset(self):
         return User.objects.filter(school=self.request.user.school)
-
-
 class DocumentUpdateView(UpdateView):
     model = Document
     form_class = DocumentForm
     template_name = 'main/document_form.html'
     success_url = reverse_lazy('documents')
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        add_export_book(f"Обновлён документ: {self.object.title}", self.request.user.school)
+        return response
+
 class DocumentDeleteView(DeleteView):
     model = Document
     template_name = 'main/document_delete.html'
     success_url = '/'
 
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        add_export_book(f"Удалён документ: {self.object.title}", self.request.user.school)
+        return super().delete(request, *args, **kwargs)
 
 class TemplateUpdateView(LoginRequiredMixin, UpdateView):
     model = Template
     form_class = TemplateForm
     template_name = 'main/template_form.html'
     success_url = reverse_lazy('templates')
+
     def get_queryset(self):
         return Template.objects.filter(school=self.request.user.school)
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        add_export_book(f"Обновлён шаблон: {self.object.title}", self.request.user.school)
+        return response
 
 class TemplateDeleteView(LoginRequiredMixin, DeleteView):
     model = Template
     template_name = 'main/template_confirm_delete.html'
     success_url = reverse_lazy('templates')
+
     def get_queryset(self):
         return Template.objects.filter(school=self.request.user.school)
 
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        add_export_book(f"Удалён шаблон: {self.object.title}", self.request.user.school)
+        return super().delete(request, *args, **kwargs)
 
 @login_required
 def index(request):
@@ -194,6 +224,10 @@ def templates(request):
     templates = Template.objects.filter(school=request.user.school)
     return render(request, 'main/templates.html', {"templates": templates})
 
+@login_required
+def standard_docs(request):
+    standard_docs = Category.objects.all()
+    return render(request, 'main/standard_docs.html', {"standard_docs": standard_docs})
 
 @login_required
 def template_create(request):
@@ -348,3 +382,11 @@ def save_docx(request):
     print(ss.file)
     
     return redirect('index')
+def export_book(request):
+    if request.method == 'POST':
+        title = request.POST.get('title', 'Запись в книге учёта')
+        add_export_book(title, request.user.school)
+        return redirect('export_book')
+    school=request.user.school
+    export_book=ExportBook.objects.filter(school=school)
+    return render(request,'main/export_book.html',{'ebook':export_book})

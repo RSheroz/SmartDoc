@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from main.models import School, User, Document
+from smartadmin.forms import *
 
 def is_superadmin(user):
     return user.is_superuser or getattr(user, 'role', '') == 'director'
@@ -34,7 +35,7 @@ def approve_school(request, school_id):
     school.approved = True
     school.save()
     messages.success(request, f'Школа "{school.name}" одобрена.')
-    return redirect('schools')
+    return redirect('smartadmin:schools')
 
 
 @login_required
@@ -93,3 +94,20 @@ def analytics(request):
         'school_stats': school_stats,
     }
     return render(request, 'smartadmin/analytics.html', context)
+
+
+@login_required
+@user_passes_test(is_superadmin)
+def edit_school(request, school_id):
+    school = get_object_or_404(School, id=school_id)
+    if request.method == 'POST':
+        form = SchoolForm(request.POST, request.FILES, instance=school)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Данные школы "{school.name}" успешно обновлены!')
+            return redirect('smartadmin:schools')
+        else:
+            messages.error(request, 'Ошибка при сохранении формы.')
+    else:
+        form = SchoolForm(instance=school)
+    return render(request, 'smartadmin/edit_school.html', {'form': form, 'school': school})
