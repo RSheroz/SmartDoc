@@ -378,16 +378,16 @@ document.addEventListener('DOMContentLoaded', function() {
   addLanguageSwitcher();
 });
 
-function addLanguageSwitcher() {
-  const headerRight = document.querySelector('.header-right');
-  if (headerRight && !document.querySelector('.lang-switcher')) {
-    const langSwitcher = document.createElement('div');
-    langSwitcher.className = 'lang-switcher';
-    langSwitcher.innerHTML = `
-      <button class="lang-btn {% if request.resolver_match.url_name == 'index' %}active{% endif %}" data-lang="tj" onclick="changeLanguage('tj')">TJ</button>
-      <button class="lang-btn {% if request.resolver_match.url_name == 'index' %}active{% endif %}" data-lang="ru" onclick="changeLanguage('ru')">RU</button>
-      <button class="lang-btn {% if request.resolver_match.url_name == 'index' %}active{% endif %}" data-lang="en" onclick="changeLanguage('en')">EN</button>
-    `;
-    headerRight.insertBefore(langSwitcher, headerRight.firstChild);
-  }
-}
+// function addLanguageSwitcher() {
+//   const headerRight = document.querySelector('.header-right');
+//   if (headerRight && !document.querySelector('.lang-switcher')) {
+//     const langSwitcher = document.createElement('div');
+//     langSwitcher.className = 'lang-switcher';
+//     langSwitcher.innerHTML = `
+//       <button class="lang-btn {% if request.resolver_match.url_name == 'index' %}active{% endif %}" data-lang="tj" onclick="changeLanguage('tj')">TJ</button>
+//       <button class="lang-btn {% if request.resolver_match.url_name == 'index' %}active{% endif %}" data-lang="ru" onclick="changeLanguage('ru')">RU</button>
+//       <button class="lang-btn {% if request.resolver_match.url_name == 'index' %}active{% endif %}" data-lang="en" onclick="changeLanguage('en')">EN</button>
+//     `;
+//     headerRight.insertBefore(langSwitcher, headerRight.firstChild);
+//   }
+// }

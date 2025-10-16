@@ -6,6 +6,7 @@ urlpatterns = [
     path('', index, name='index'),  # Главная страница после входа
     path('add_user/', add_user, name='register'),
     path('export_book',export_book,name='export_book'),
+    path('export_book/pdf/', export_book_pdf, name='export_book_pdf'),
     path('standard_docs/', standard_docs, name='standard_docs'),
     path('login/', login_view,name='login'), #auth_views.LoginView.as_view(template_name='main/login.html'), name='login'),
     path('logout/', logout, name='logout'),

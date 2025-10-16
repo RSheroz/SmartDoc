@@ -23,6 +23,11 @@
                 </div>
             </div>
             <div class="header-right">
+                <div class="language-switcher">
+                    <button class="lang-btn" data-lang="ru" onclick="changeLanguage('ru')">RU</button>
+                    <button class="lang-btn" data-lang="tj" onclick="changeLanguage('tj')">TJ</button>
+                    <button class="lang-btn" data-lang="en" onclick="changeLanguage('en')">EN</button>
+                </div>
                 <div class="user-info">
                     <span>{{ user.first_name }} {{ user.last_name }}</span>
                     <span class="user-role"><span data-i18n="role">Роль</span>: {{ user.get_role_display }}: {{user.school}}</span>
@@ -56,8 +61,8 @@
                     <span data-i18n="head_templates">Шаблоны</span>
                 </a>
                 <a href="{% url 'export_book' %}" class="nav-tab {% if request.resolver_match.url_name == 'export_book' %}active{% endif %}">
-                    <i data-lucide="users"></i>
-                    <span data-i18n="head_export">Экспортная книга</span>
+                    <i data-lucide="book-open"></i>
+                    <span data-i18n="head_export">Книга выдачи</span>
                 </a>
                 <a href="{% url 'standard_docs' %}" class="nav-tab {% if request.resolver_match.url_name == 'standard_docs' %}active{% endif %}">
                     <i data-lucide="folder"></i>

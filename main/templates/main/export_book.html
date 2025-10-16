@@ -1,7 +1,13 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-<div style="text-align: center; color: var(--surface);"><span>Экспортная книга школы {{ user.school.name }}</span> <button class="btn btn-primary" id="plus">+</button></div>
+<div style="text-align: center; color: var(--surface);">
+  <span>Экспортная книга школы {{ user.school.name }}</span>
+  <button class="btn btn-primary" id="plus">+</button>
+  <a href="{% url 'export_book_pdf' %}" class="btn btn-outline-danger btn-sm">
+    <i class="bi bi-file-earmark-pdf"></i> Скачать PDF
+  </a>
+</div>
 <table class="table table-striped">
   <thead>
     <tr>
@@ -20,7 +26,7 @@
         <td><i id="" data-lucide="edit"></i></td>
       </tr>
     {% empty %}
-      <tr><td colspan="3">Нет записей</td></tr>
+      <tr><td colspan="4">Нет записей</td></tr>
     {% endfor %}
   </tbody>
 </table>

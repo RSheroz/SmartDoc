@@ -2,8 +2,6 @@ from django.core.exceptions import PermissionDenied
 from functools import wraps
 from django.http import HttpResponse
 
-
-# === Декоратор для FBV ===
 def role_required(allowed_roles):
     """
     Проверяет, что у пользователя есть одна из разрешённых ролей.
@@ -27,7 +25,6 @@ def role_required(allowed_roles):
     return decorator
 
 
-# === Mixin для CBV ===
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 
 class RoleRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
@@ -39,7 +36,6 @@ class RoleRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
         return self.request.user.role in self.allowed_roles
 
 
-# === Готовые миксины ===
 class DirectorRequiredMixin(RoleRequiredMixin):
     allowed_roles = ['director']
 
