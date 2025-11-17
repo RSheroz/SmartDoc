@@ -15,6 +15,7 @@ urlpatterns = [
     path('user_delete/<int:pk>/', UserDeleteView.as_view(), name='user_delete'),
     path('profile/', profile, name='profile'),
     path('school/', school, name='school'),
+    path('school_edit/', school_edit, name='school_edit'),
     path('school_reg/', school_reg, name='school_reg'),
     path('ai',ai,name='ai'),
     path('templates/',templates, name='templates'),

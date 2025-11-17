@@ -9,7 +9,7 @@
         <h2 data-i18n="school_info">Информация о школе</h2>
         <div class="page-actions">
             {% if user.role == 'director' %}
-            <a href="{% url 'school'  %}" class="btn btn-primary" data-i18n="edit_school">
+            <a href="{% url 'school_edit'  %}" class="btn btn-primary" data-i18n="edit_school">
                 <i data-lucide="edit"></i>
                 Редактировать
             </a>
@@ -42,16 +42,6 @@
                 <div class="info-item">
                     <label data-i18n="school_email">Email:</label>
                     <span class="info-value">{{ user.school.email|default:"Не указан" }}</span>
-                </div>
-                <div class="info-item">
-                    <label data-i18n="school_website">Веб-сайт:</label>
-                    <span class="info-value">
-                        {% if user.school.website %}
-                            <a href="{{ user.school.website }}" target="_blank">{{ user.school.website }}</a>
-                        {% else %}
-                            Не указан
-                        {% endif %}
-                    </span>
                 </div>
             </div>
         </div>

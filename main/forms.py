@@ -97,3 +97,14 @@ class UserUpdateForm(ModelForm):
             'role': Select(attrs={'class': 'form-control'}),
             'school': Select(attrs={'class': 'form-control'}),
         }
+class SchoolForm(ModelForm):
+    class Meta:
+        model = School
+        fields = ['name', 'address', 'email', 'tel', 'headletter']
+        widgets = {
+            'name': TextInput(attrs={'class': 'form-control', 'placeholder': 'Название школы'}),
+            'address': TextInput(attrs={'class': 'form-control', 'placeholder': 'Адрес'}),
+            'email': EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+            'tel': TextInput(attrs={'class': 'form-control', 'placeholder': 'Телефон'}),
+            'headletter': FileInput(attrs={'class': 'form-control'}),
+        }

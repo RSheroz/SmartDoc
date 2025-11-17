@@ -339,7 +339,18 @@ def school(request):
     }
     return render(request, 'main/school.html', data)
 
-
+@login_required
+@role_required(['director', 'admin'])
+def school_edit(request):
+    school = request.user.school
+    if request.method == 'POST':
+        form = SchoolForm(request.POST, request.FILES, instance=school)
+        if form.is_valid():
+            form.save()
+            return redirect('school')
+    else:
+        form = SchoolForm(instance=school)
+    return render(request, 'main/school_edit.html', {'form': form})
 # --- Optional AI handlers (оставляем как у тебя было) --- #
 def ai(request):
     ans, q = '', ''
