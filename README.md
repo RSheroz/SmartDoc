@@ -58,6 +58,7 @@ DB_PORT=5432
 ```
 ### 6. Применить миграции
 ```
+python manage.py makemigrations
 python manage.py migrate
 ```
 ### 7. Создать ползоавтеля
