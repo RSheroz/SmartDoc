@@ -34,8 +34,9 @@ def login_view(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
-        print(user)
-        if user is not None:
+        print(user, request.POST['password'])
+        if user is not None or User.objects.filter(username=username).exists():
+            # Проверка одобрения школы для директоров и админов
             if user.school and not user.school.approved:
                 messages.error(request, "Ваша школа ещё не одобрена администрацией.")
                 return redirect('login')

@@ -34,6 +34,11 @@ def approve_school(request, school_id):
     school = get_object_or_404(School, id=school_id)
     school.approved = True
     school.save()
+    # Активировать директора школы
+    director = User.objects.filter(school=school, role='director').first()
+    if director:
+        director.is_active = True
+        director.save()
     messages.success(request, f'Школа "{school.name}" одобрена.')
     return redirect('smartadmin:schools')
 
