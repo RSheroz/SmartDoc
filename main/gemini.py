@@ -1,7 +1,8 @@
-import requests, json, base64, win32com.client
+import requests, json, base64, win32com.client, os, time
 from docx import Document
+from decouple import config
 
-api_key = "AIzaSyBSiqzxih_ra6_qhiL7shCaQGvpKsTigGw"
+api_key = config('GEMINI_API_KEY', default='your_api_key_here')
 url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
 
 def convert_doc_to_docx_windows(doc_path):
@@ -32,6 +33,9 @@ def read_docx_with_tables(file):
     return "\n".join(full_text)
 
 def chatgpt(prompt):
+    # Задержка для избежания лимита запросов (429)
+    time.sleep(2)  # 2 секунды задержки
+    
     headers = {
         "Content-Type": "application/json"
     }
@@ -47,12 +51,22 @@ def chatgpt(prompt):
     }
     try:
         response = requests.post(url, headers=headers, data=json.dumps(payload))
-    except:
-        return '<div class="alert alert-danger">Error connection or request</div>'
+        if response.status_code != 200:
+            return f'<div class="alert alert-danger">Ошибка API: {response.status_code} - {response.text}</div>'
+        result = response.json()
+        print("API Response:", result)  # Для отладки
+        if 'candidates' in result and result['candidates']:
+            text = result['candidates'][0]['content']['parts'][0]['text']
+            return text
+        else:
+            return '<div class="alert alert-danger">Ошибка: Неверный ответ от API</div>'
+    except requests.exceptions.RequestException as e:
+        return f'<div class="alert alert-danger">Ошибка сети: {str(e)}</div>'
+    except KeyError as e:
+        return f'<div class="alert alert-danger">Ошибка обработки ответа: {str(e)}</div>'
+    except Exception as e:
+        return f'<div class="alert alert-danger">Неизвестная ошибка: {str(e)}</div>'
 
-    result = response.json()
-    text = result['candidates'][0]['content']['parts'][0]['text']
-    return text
 
 def send_file(file_paths, prompt):
     file_contents = []
