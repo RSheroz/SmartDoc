@@ -236,9 +236,41 @@ def templates(request):
     return render(request, 'main/templates.html', {"templates": templates})
 
 @login_required
-def standard_docs(request):
-    standard_docs = Category.objects.all()
-    return render(request, 'main/standard_docs.html', {"standard_docs": standard_docs})
+def categories(request):
+    categories = Category.objects.all()
+    return render(request, 'main/categories.html', {"categories": categories})
+
+@login_required
+def category_detail(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    documents = Document.objects.filter(category=category, school=request.user.school)
+    return render(request, 'main/category_detail.html', {
+        'category': category,
+        'documents': documents
+    })
+
+@login_required
+def download_category_archive(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    documents = Document.objects.filter(category=category, school=request.user.school)
+
+    from io import BytesIO
+    import zipfile
+    from django.http import HttpResponse
+
+    buffer = BytesIO()
+    with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        for doc in documents:
+            # Добавить текстовый файл с содержимым
+            zip_file.writestr(f"{doc.title}.txt", doc.content)
+            # Если есть файл, добавить его
+            if doc.file:
+                zip_file.write(doc.file.path, f"{doc.title}_{doc.file.name}")
+
+    buffer.seek(0)
+    response = HttpResponse(buffer.getvalue(), content_type='application/zip')
+    response['Content-Disposition'] = f'attachment; filename="{category.name}_documents.zip"'
+    return response
 
 @login_required
 def template_create(request):
@@ -325,6 +357,10 @@ def document_detail(request, pk):
     }
     return JsonResponse(data, safe=False)
 
+@login_required
+def document_view(request, pk):
+    document = get_object_or_404(Document, pk=pk, school=request.user.school)
+    return render(request, 'main/document_view.html', {'document': document})
 
 @login_required
 def school(request):

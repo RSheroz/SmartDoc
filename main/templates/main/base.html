@@ -64,9 +64,9 @@
                     <i data-lucide="book-open"></i>
                     <span data-i18n="head_export">Книга выдачи</span>
                 </a>
-                <a href="{% url 'standard_docs' %}" class="nav-tab {% if request.resolver_match.url_name == 'standard_docs' %}active{% endif %}">
+                <a href="{% url 'categories' %}" class="nav-tab {% if request.resolver_match.url_name == 'categories' %}active{% endif %}">
                     <i data-lucide="folder"></i>
-                    <span data-i18n="head_standard">Стандартные документы</span>
+                    <span data-i18n="head_categories">Категории</span>
                 </a>
                 {% if user.role == 'director' %}
                 <a href="{% url 'user_list' %}" class="nav-tab {% if request.resolver_match.url_name == 'user_list' %}active{% endif %}">

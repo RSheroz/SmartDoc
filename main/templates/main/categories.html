@@ -3,10 +3,10 @@
 
 {% block content %}
 <div class="container">
-    <h1>Стандартные документы</h1>
+    <h1>Категории</h1>
     <div class="categories">
-        {% for category in standard_docs %}
-        <div class="category-card">
+        {% for category in categories %}
+        <div class="category-card" data-category-id="{{ category.id }}">
             <h2>{{ category.name }}</h2>
             <p>{{ category.description }}</p>
             {% if category.file %}<p>{{category.file.name}}</p>
@@ -14,7 +14,7 @@
             {% endif %}
             <div class="card-footer">
                 <span class="doc-count">{{ category.documents.count }} документов</span>
-                <button class="view-btn">Просмотреть</button>
+                <a href="{% url 'category_detail' category.id %}" class="view-btn">Просмотреть</a>
             </div>
         </div>
         {% empty %}
@@ -23,22 +23,7 @@
     </div>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const viewButtons = document.querySelectorAll('.view-btn');
-        
-        viewButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const categoryCard = this.closest('.category-card');
-                const categoryName = categoryCard.querySelector('h2').innerText;
-                var categoryDescryption = categoryCard.querySelector('p').innerText;
-                if (categoryDescryption==null || categoryDescryption===''){
-                    categoryDescryption='Без описания'
-                }else{alert(categoryDescryption)}
-                // Здесь можно реализовать логику для отображения документов категории
-                Modal.show(`${categoryDescryption}`,`${categoryName}`)
-            });
-        });
-    });    
+    // JavaScript для модального окна удален, теперь используется ссылка
 </script>
 <style>
 .categories {

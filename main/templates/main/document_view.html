@@ -1,0 +1,66 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ document.title }}</h1>
+    <div class="document-info">
+        <p><strong>Категория:</strong> {{ document.category.name }}</p>
+        <p><strong>Статус:</strong> {{ document.get_status_display }}</p>
+        <p><strong>Создан:</strong> {{ document.created_at|date:"d.m.Y H:i" }}</p>
+        <p><strong>Автор:</strong> {{ document.created_by.username }}</p>
+    </div>
+    <div class="document-content">
+        <h2>Содержание</h2>
+        <div>{{ document.content|linebreaks }}</div>
+    </div>
+    {% if document.file %}
+    <div class="document-file">
+        <h2>Прикрепленный файл</h2>
+        <a href="{{ document.file.url }}" download>{{ document.file.name }}</a>
+    </div>
+    {% endif %}
+    <div class="actions">
+        <a href="{% url 'documents' %}" class="btn btn-secondary">Назад к документам</a>
+        <a href="{% url 'category_detail' document.category.id %}" class="btn btn-primary">Назад к категории</a>
+    </div>
+</div>
+
+<style>
+.document-info {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.document-content {
+    margin-bottom: 20px;
+}
+
+.document-file {
+    margin-bottom: 20px;
+}
+
+.actions {
+    margin-top: 30px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-right: 10px;
+    text-decoration: none;
+    border-radius: 4px;
+    color: white;
+}
+
+.btn-primary {
+    background: #007bff;
+}
+
+.btn-secondary {
+    background: #6c757d;
+}
+</style>
+{% endblock %}

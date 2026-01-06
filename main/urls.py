@@ -7,7 +7,9 @@ urlpatterns = [
     path('add_user/', add_user, name='register'),
     path('export_book',export_book,name='export_book'),
     path('export_book/pdf/', export_book_pdf, name='export_book_pdf'),
-    path('standard_docs/', standard_docs, name='standard_docs'),
+    path('categories/', categories, name='categories'),
+    path('categories/<int:category_id>/', category_detail, name='category_detail'),
+    path('categories/<int:category_id>/download/', download_category_archive, name='download_category_archive'),
     path('login/', login_view,name='login'), #auth_views.LoginView.as_view(template_name='main/login.html'), name='login'),
     path('logout/', logout, name='logout'),
     path('user_list/', user_list, name='user_list'),
@@ -27,6 +29,7 @@ urlpatterns = [
     path('document_create/',document_create,name='document_create'),
     path('documents/edit-<int:pk>/', DocumentUpdateView.as_view(), name='document_edit'),
     path('documents/delete-<int:pk>/', DocumentDeleteView.as_view(), name='document_delete'),
+    path('documents/<int:pk>/', document_view, name='document_detail'),
     path('api/documents/<int:pk>/', document_detail, name='api_document_detail'),
     path('save_docx',save_docx,name='save_docx'),
 ]
